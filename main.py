@@ -2,16 +2,13 @@ import asyncio
 import logging
 import configparser
 from threading import Thread
-
 from client import Client
 
-loop = asyncio.new_event_loop()
 
-
-def side_thread(loop):
-    asyncio.set_event_loop(loop)
-    loop.run_forever()
-
+def worker(client):
+    new_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(new_loop)
+    new_loop.run_until_complete(client.main())
 
 def main():
     config = configparser.ConfigParser()
@@ -27,11 +24,8 @@ def main():
         phone = phone.strip()
         print(phone)
         client = Client(phone, api_id, api_hash, entity)
-        asyncio.run_coroutine_threadsafe(client.main(), loop)
+        Thread(target=worker, args=[client]).start()
 
-
-thread = Thread(target=side_thread, args=(loop,), daemon=True)
-thread.start()
 
 if __name__ == '__main__':
     main()

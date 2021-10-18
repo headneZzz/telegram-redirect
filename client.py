@@ -9,9 +9,9 @@ class Client:
         self.client.start(phone=lambda: phone)
 
     async def main(self):
-        self.client.add_event_handler(self.handler, NewMessage(incoming=True))
+        self.client.add_event_handler(self.forward, NewMessage(incoming=True))
         await self.client.run_until_disconnected()
 
-    async def handler(self, event):
-        await self.client.forward_messages(self.entity, event.message)
+    async def forward(self, event):
         print(event.message.message)
+        await self.client.forward_messages(self.entity, event.message)
