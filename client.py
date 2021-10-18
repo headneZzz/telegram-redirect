@@ -1,3 +1,5 @@
+import asyncio
+
 from telethon.events import NewMessage
 from telethon import TelegramClient
 
@@ -7,10 +9,7 @@ class Client:
         self.client = TelegramClient(phone, api_id, api_hash)
         self.entity = entity
         self.client.start(phone=lambda: phone)
-
-    async def main(self):
         self.client.add_event_handler(self.forward, NewMessage(incoming=True))
-        await self.client.run_until_disconnected()
 
     async def forward(self, event):
         print(event.message.message)
